@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+
+		<title>REST com SpringMVC</title>
+
+		<meta name="description" content="Apresentação sobre como fazer uma API REST com SpringMVC">
+		<meta name="author" content="Élysson Mendes Rezende">
+
+		<meta name="apple-mobile-web-app-capable" content="yes">
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/beige.css" id="theme">
+
+		<!-- Code syntax highlighting -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+
+		<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+	</head>
+
+	<body>
+
+		<div class="reveal">
+			<!-- Any section element inside of this container is displayed as a slide -->
+			<div class="slides">
+				<section>
+					<h1>API REST utilizando SpringMVC</h1>
+					<h3>Sistema para controle de Locações</h3>
+                    <p>FAI - Centro de Ensino Superior em Gestão, Tecnologia e Educação</p>
+					<p>
+						<small>Criado por <a href="http://elyssonmr.com">Élysson Mendes Rezende</a> / <a href="http://twitter.com/elyssonmr">@elyssonmr</a></small>
+					</p>
+                    <p>
+                        <small>Desenvolvedor Pleno na <a href="http://www.brbid.com/">BrBid.com</a></small>
+                    </p>
+				</section>
+
+				<section>
+					<h2>Vamos discutir sobre:</h2>
+					<ul>
+                        <li>Introdução a arquitetura REST</li>
+                        <li>Caracteristicas da Arquitetura REST</li>
+                        <li>O protocolo HTTP na arquitetura REST</li>
+                        <li>Preparação do Projeto no NetBeans</li>
+                        <li>Codificação de um projeto de exemplo</li>
+                        <li>Utilização do app "I'm Only Resting" no teste do exemplo</li>
+                        <li>Codificação do "SysLoc" - LoCar</li>
+                        <li>Conclusão</li>
+                    </ul>
+				</section>
+
+				<!-- Example of nested vertical slides -->
+				<section>
+					<h2>Sobre Mim</h2>
+                    <ul>
+                        <li>Formado em <b>Sistemas de Informação</b> pela FAI</li>
+                        <li>Pós Graduado em <b>Desenvolvimento Ágil de Aplicativos para dispositivos Móveis e Web</b> pela FAI</li>
+                        <li>Desenvolvedor Pleno na <a href="http://www.brbid.com/">BrBid.com</a></li>
+                        <li>Curioso por tecnologias novas (que funcionem no linux :D)</li>
+                        <li>Cozinheiro, Seriezeiro e Pedaleiro</li>
+                        <li>Rank 13 no Heroes of The Storm (Reilith#1928)</li>
+                    </ul>
+				</section>
+
+				<section>
+					<h2>Introdução a Arquitetura REST</h2>
+					<ul>
+                        <li>O estilo arquitetural "<i>REpresentation State Transfer</i>" foi criado por <a href="https://twitter.com/fielding">Roy Fielding</a> em sua tese de doutorado;</li>
+                        <li>É utilizado para a troca de dados entre sistemas distribuídos;</li>
+                        <li>É baseado nos estilos <b><i>Cliente-Servidor</i></b> e <b><i>Peer-to-Peer</i></b>;</li>
+                        <li>As trocas de dados utilizam o protocolo HTTP;</li>
+                        <li>Usado para compartilhamento/integração de dados entre sistemas;</li>
+                        <li>Pode ser utilizados com diversos formatos de mensagens (Json, XML e etc);</li>
+                    </ul>
+				</section>
+                <section>
+                    <h2>Caracteristicas da Arquitetura REST</h2>
+                    <ul>
+                        <li>Permite criar serviços mais leves até serviços mais robustos;</li>
+                        <li>Utiliza os verbos do protocolo HTTP para alterar os estados dos recursos;</li>
+                        <li>Não deve haver estados na comunicação, ou seja, toda mensagem é tratada como única</li>
+                        <li>Foca na interface uniforme entre os componentes</li>
+                        <li>Permite a criação de sistemas mais desacoplados</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Caracteristicas da Arquitetura REST</h2>
+                    <ul>
+                        <li>
+                            A arquitetura REST é definida por:
+                            <ul>
+                                <li>Indentificação de recursos</li>
+                                <li>Manipulação de recursos por meio de representações</li>
+                                <li>As mensagens são autodescritivas</li>
+                                <li>Hipermídia como motor do estado da aplicação</li>
+                            </ul>
+                        </li>
+                        <li>Permite escrever o sistema utilizando diversas tenologias</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>O protocolo HTTP na arquitetura REST</h2>
+                    <ul>
+                        <li>Hipertext Transfer Protocol é o único protocolo criado para transferir representações de recursos;</li>
+                        <li>
+                            É compativel com diversos recursos da arquitetura REST:
+                            <ul>
+                                <li>Ausência de estados entre as conexões;</li>
+                                <li>Possui mecanismos de controle de cache;</li>
+                                <li>É possível utilizar diversas camadas de serviço;</li>
+                                <li>Utiliza o estilo Cliente-Servidor;</li>
+                                <li>Possui uniformidade na representação dos dados transferidos;</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>O protocolo HTTP na arquitetura REST</h2>
+                    <ul>
+                        <li>O verbo <b>GET</b> indica a busca de um recurso;</li>
+                        <li>O verbo <b>POST</b> indica o envio de informações de um novo recurso;</li>
+                        <li>O verbo <b>HEAD</b> indica a busca de meta-informação de um recurso;</li>
+                        <li>O verbo <b>PUT</b> indica a atualização das informações do recurso;</li>
+                        <li>O verbo <b>DELETE</b> indica a exclusão de um recurso;</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>O protocolo HTTP na arquitetura REST</h2>
+                    <ul>
+                        <li>Todos os Recursos são identificados por meio de identificador Uniforme de Recursos (URI);</li>
+                        <li>Composto por uma cadeia de caracteres que identificam um nome ou recurso;</li>
+                        <li>Exemplo:</li>
+                    </ul>
+                    <img data-src="img/uri.png" alt="representação de um recurso"/>
+                </section>
+                <section>
+                    <h2>Preparação do projeto no NetBeans</h2>
+                    <p>Criando o projeto no NetBeans</p>
+                    <ul>
+                        <li>Java Web -&gt; New Web Application</li>
+                        <li>Escolha um nome. Ex: SpringMVCRest</li>
+                        <li>Escolha o Tomcat que ele sugerir. Ex: 8.0</li>
+                        <li>Não Escolha nenhum Framework</li>
+                        <li>Adicionar as bibliotecas copiadas ao projeto</li>
+                        <li>Criar o pacote "br.fai.springmvcrest"</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Preparação do Projeto no NetBeans</h2>
+                    <p>Configurações do Projeto (XML \o/ #SQN)</p>
+                    <ul>
+                        <li>Criar o pacote "br.fai.springmvcrest.config"</li>
+                        <li>Criar a classe "AppConfig.java"</li>
+                        <li>Adicionar o código:</li>
+                    </ul>
+                    <pre><code data-trim class="java">
+                        package br.fai.springmvcrest.config;
+
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+
+@Configuration
+@ComponentScan("br.fai.springmvcrest.*")
+@EnableWebMvc
+public class AppConfig {
+}</code></pre>
+                </section>
+                <section>
+                    <h2>Preparação do Projeto no NetBeans</h2>
+                    <p>Criar a classe "WebAppInitializer.java"</p>
+                    <p>Adicionar o código:</p>
+                    <pre><code data-trim class="java">package br.fai.springmvcrest.config;
+
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRegistration.Dynamic;
+import org.springframework.web.WebApplicationInitializer;
+import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
+import org.springframework.web.servlet.DispatcherServlet;
+
+public class WebAppInitializer implements WebApplicationInitializer {
+
+    @Override
+    public void onStartup(ServletContext servletContext) throws ServletException {
+        AnnotationConfigWebApplicationContext ctx = new AnnotationConfigWebApplicationContext();
+        ctx.register(AppConfig.class);
+        ctx.setServletContext(servletContext);
+        Dynamic dynamic = servletContext.addServlet("dispatcher", new DispatcherServlet(ctx));
+        dynamic.addMapping("/");
+        dynamic.setLoadOnStartup(1);
+    }
+}
+</code></pre>
+                </section>
+                <section>
+                    <h2>Codificação de um projeto de exemplo</h2>
+                    <ul>
+                        <li>Criar o pacote "br.fai.springmvcrest.models"</li>
+                        <li>Criar a classe "Veiculo.java"</li>
+                        <li>Adicionar o código:</li>
+                    </ul>
+                    <pre><code data-trim class="java">package br.fai.springmvcrest.models;
+
+public class Veiculo {
+    private Long id;
+    private String modelo;
+
+    public Veiculo(long id, String modelo) {
+        this.id = id;
+        this.modelo = modelo;
+    }
+    // Getters e Setters
+}
+</code></pre>
+                </section>
+                <section>
+                    <h2>Codificação de um projeto de exemplo</h2>
+                    <ul>
+                        <li>Criar o pacote "br.fai.springmvcrest.controller"</li>
+                        <li>Criar a classe "VeiculoController.java"</li>
+                        <li>Adicionar o código:</li>
+                    </ul>
+                    <pre><code data-trim class="java">package br.fai.springmvcrest.controller;
+
+import br.fai.springmvcrest.models.Veiculo;
+import java.util.ArrayList;
+import java.util.List;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class VeiculosController {
+
+    @RequestMapping(value="/veiculos/", method=RequestMethod.GET)
+    public List&lt;Veiculo&gt; getVeiculos() {
+        List&lt;Veiculo&gt; resp = new ArrayList&lt;Veiculo&gt;();
+        resp.add(new Veiculo(1l, "Fiesta"));
+        return resp;
+    }
+}</code></pre>
+                </section>
+                <section>
+                    <h2>Codificação de um projeto de exemplo</h2>
+                    <p>Ainda no veículo controller, Adicionar o código:</p>
+                    <pre><code data-trim class="java">@RequestMapping(value="/veiculos/{id}", method=RequestMethod.GET)
+    public Veiculo getDetail(@PathVariable Long id) {
+        return new Veiculo(id, "Buscado");
+    }
+
+    @RequestMapping(value="/veiculos/", method=RequestMethod.POST)
+    @ResponseStatus(HttpStatus.CREATED)
+    public Veiculo create(@RequestBody Veiculo veiculo) {
+        return veiculo;
+    }
+
+    @RequestMapping(value="veiculos/{id}", method=RequestMethod.PUT)
+    public Veiculo update(@PathVariable Long id,
+                          @RequestBody Veiculo veiculo) {
+        return veiculo;
+    }</code></pre>
+                </section>
+                <section>
+                    <h2>Utilização do App I'm Only Resting</h2>
+                </section>
+
+                <section>
+                    <h2>Codificação do "SysLoc" - LoCar</h2>
+                    <p>Requisitos:</p>
+                    <ul>
+                        <li>Cadastrar Veículos</li>
+                        <li>Cadastrar Clientes</li>
+                        <li>Cadastrar Emprestimos</li>
+                        <li>Cadastrar Reservas (Extra)</li>
+                    </ul>
+                </section>
+                <section>
+                    <h2>Codificação do "SysLoc" - LoCar</h2>
+                    <h3>Padrões de Projetos que vamos utilizar</h3>
+                    <ol>
+                        <li>Singleton</li>
+                        <li>DAO</li>
+                        <li>Injeção de dependencias</li>
+                        <li>Front Controller (o Spring que esta cuidando disso)</li>
+                    </ol>
+                </section>
+                <section>
+                    <h2>Mãos na massa</h2>
+                    <p>Fazer o CRUD de Veículos</p>
+                    <p>Implementação de Singleton</p>
+                    <p>Implementação do padrão DAO</p>
+                    <p>Codificação do Controller</p>
+                    <p>Testes com o "im-only-resting"</p>
+                </section>
+
+                <section>
+                    <h2>Conclusões</h2>
+                    <ul>
+                        <li>Podemos criar de aplicações simples (nosso exemplo) a complexas utilizando a arquitetura REST;</li>
+                        <li>Conseguimos criar um interface uniforme para distribuir a nossa aplicação;</li>
+                        <li>O Spring MVC 4.0 possuí recursos para facilitar o desenvolvimento de serviços REST;</li>
+                        <li>Existem ferramentas que podemos utilizar para testar os nossos serviços;</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Referências</h2>
+                    <ul>
+                        <li>Estudo Conceitual da Arquitetura Representation State Transfer (REST)</li>
+                        <li><a href="http://www.concretepage.com/spring-4/spring-4-rest-web-service-json-example-tomcat">Spring 4 + Rest Web Service + JSON Example with Tomcat using @RestController</a></li>
+                        <li><a href="https://spring.io/docs">Documentação do Spring</a></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h2>Muito Obrigado</h2>
+                </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+
+			// Full list of configuration options available at:
+			// https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				controls: true,
+				progress: true,
+				history: true,
+				center: true,
+                slideNumber: true,
+
+				transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+				// Optional reveal.js plugins
+				dependencies: [
+					{ src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+					{ src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+					{ src: 'plugin/zoom-js/zoom.js', async: true },
+					{ src: 'plugin/notes/notes.js', async: true }
+				]
+			});
+
+		</script>
+
+	</body>
+</html>
