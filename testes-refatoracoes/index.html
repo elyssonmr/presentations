@@ -1,0 +1,340 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Teste &hearts; Refatoração</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="description" content="Apresentação sobre testes e refatoração">
+        <meta name="author" content="Elysson MR">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <link rel="stylesheet" href="css/reveal.css">
+        <link rel="stylesheet" href="css/theme/night.css">
+
+        <!-- Theme used for syntax highlighting of code -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+        <link rel="stylesheet" href="/css/font-awesome.min.css">
+
+        <!-- Printing and PDF exports -->
+        <script>
+            var link = document.createElement( 'link' );
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
+            link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+            document.getElementsByTagName( 'head' )[0].appendChild( link );
+        </script>
+    </head>
+    <body>
+        <div class="reveal">
+            <div class="slides">
+                <section>
+                    <h2>Teste <i class="fa fa-heart" aria-hidden="true"></i> Refatoração</h2>
+                    <h4>Dicas para deixar seu código "testável"</h4>
+                    <p>
+                        <small><a href="https://github.com/elyssonmr">Elysson MR</a> / <a href="http://twitter.com/elyssonmr">@elyssonmr</a></small>
+                    </p>
+                    <p><small>Analista Implementador na <a href="https://www.softplan.com.br">Softplan</a></small></p>
+                </section>
+                <section>
+                    <h2>Spoilers</h2>
+                    <ul>
+                        <li>
+                            Conceitual
+                            <ul>
+                                <li>Testes</li>
+                                <li>Técnicas de refatoração</li>
+                                <li>Sintomas de "badsmellite"</li>
+                            </ul>
+                        </li>
+                        <li>
+                            Prático
+                            <ul>
+                                <li>Aplicando técnicas de refatoração</li>
+                                <li>Como teste e refatoração andam juntos</li>
+                            </ul>
+                        </li>
+                        <li>Conclusões</li>
+                    </ul>
+                </section>
+                <section>
+                    <h1><i class="fa fa-exclamation-triangle fa-6"></i></h1>
+                    <p>Disclaimer</p>
+                </section>
+                <section>
+                    <h2>Conceitual</h2>
+                </section>
+                <section>
+                    <h3>Testes</h3>
+                    <ul>
+                        <li class="fragment fade-down">Testes no geral validam se o sistema está de acordo com a especificação</li>
+                        <li class="fragment fade-right">"Garantem a qualidade do sistema"</li>
+                        <li class="fragment fade-up">Auxiliam no etendimento e a evolução do sistema</li>
+                        <li class="fragment fade-left">São divididos em 5 tipos: <b>unidade</b>, <b>integração</b>, <b>sistema</b>, <b>aceitação</b> e <b>operação</b></li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Conceitos - Tipos de Teste</h3>
+                    <ul>
+                        <li class="fragment fade-down">
+                            Unidade
+                            <ul>
+                                <li class="fragment fade-down">Testam as menores unidades de software (pequenas partes ou unidades do sistema)</li>
+                                <li class="fragment fade-down">O alvo desse tipo de teste são: subrotinas, métodos, classes ou mesmo pequenos trechos de código</li>
+                                <li class="fragment fade-down">Identificam falhas dentro de uma parte do sistema independente do todo</li>
+                                <li class="fragment fade-down">São os testes mais rapídos de serem executados (ou deveriam ser)</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+                <section>
+                    <h3>Conceitos - Tipos de Teste</h3>
+                    <p>Exemplo de teste de unidade</p>
+                    <pre>
+                        <code data-trim data-noescape>
+                            import unittest
+
+                            def impar_par(numero):
+                                if numero % 2:
+                                    return "Ímpar"
+                                else:
+                                    return "Par"
+
+                            class ImparParTestCase(unittest.TestCase):
+                                def test_impar_par_retorna_par(self):
+                                    esperado = "Par"
+                                    resposta = impar_par(2)
+                                    self.assertEqual(esperado, resposta)
+                        </code>
+                    </pre>
+                </section>
+
+                <section>
+                    <h3>Conceitos - Tipos de Teste</h3>
+                    <ul>
+                        <li class="fragment fade-right">
+                            Integração
+                            <ul>
+                                <li class="fragment fade-right">Auxiliam a encontrar falhas provenientes da integração interna dos componentes de um sistema</li>
+                                <li class="fragment fade-right">Usados para testar o relacionamento entre componentes do sistema <strike>e a integração com outros sistemas</strike></li>
+                                <li class="fragment fade-right">Nível de teste preferidos dos <a href="https://docs.python.org/3/library/unittest.mock-examples.html" target="_blank">Mocks</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Conceitos - Tipos de Teste</h3>
+                    <p>Exemplo de teste de integração</p>
+                    <pre>
+                        <code data-trim data-noescape>
+                            class CarrinhoCompras:
+                                # ...
+                                def calcular_descontos(self):
+                                    desconto = descontos.calcular(
+                                        self.total, self._tipo_pagamento)
+                                    return desconto
+                            
+                            class CarrinhoComprasTestCase(unittest.TestCase):
+                                def test_fechar_compra_avista(self):
+                                    produtos = [{"nome": "ProdutoA", "valor": 10},
+                                                {"nome": "ProdutoB", "valor": 90}]
+                                    carrinho = CarrinhoCompras(produtos, avista)
+                                    esperado = 10
+                                    desconto = carrinho.calcular_descontos()
+                                    self.assertEqual(esperado, desconto)
+                        </code>
+                    </pre>
+                </section>
+
+                <section>
+                    <h3>Conceitos - TDD</h3>
+                    <ul>
+                        <li class="fragment fade-down">É uma técnica de desenvolvimento de software</li>
+                        <li class="fragment fade-right">Consiste na repetição de um pequeno ciclo de desenvolvimento</li>
+                        <li class="fragment fade-up">Auxilia na decomposição da implementação</li>
+                        <li class="fragment fade-left">Permite o incremento e a evolução do sistema gradativamente</li>
+                        <li class="fragment fade-in">Incentiva a utilização de <b>baby steps</b> (pequenos passos)</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Conceitos - TDD</h3>
+                    <p>Ciclo TDD - Adaptado de <a href="http://agiledata.org/essays/tdd.html" target="_blank">Agile Data</a></p>
+                    <img src="/img/processo_tdd.jpg" alt="ciclo tdd">
+                </section>
+
+                <section>
+                    <h3>Conceitos - Refatoração</h3>
+                    <ul>
+                        <li class="fragment fade-up">Refatoração de código é o processo de reestruturar código existente sem alterar o comportamento</li>
+                        <li class="fragment fade-up"><i class="fa fa-arrow-down"></i> complexidade <i class="fa fa-arrow-up"></i> legibilidade, mantenabilidade e a extensibilidade do código</li>
+                        <li class="fragment fade-up">Refatoração ajuda a encontrar bugs escondidos</li>
+                        <li class="fragment fade-up">Deixa seus coleguinhas felizes <i class="fa fa-handshake-o"></i></li>
+                        <li class="fragment fade-up">Pode ser aplicada usando baby-steps</li>
+                        <li class="fragment fade-up">Remédio ideal para "badsmellite"</li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Técnicas de refatoração</h3>
+                    <ul>
+                        <li class="fragment fade-left">
+                            Algumas técnicas:
+                            <ul>
+                                <li class="fragment fade-left">Extração de métodos</li>
+                                <li class="fragment fade-left">Extração de campos <strike>e Classe</strike></li>
+                                <li class="fragment fade-left">Renomeação de métodos</li>
+                                <li class="fragment fade-left">Decomposição condicional</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </section>
+
+                <section>
+                    <h3>Sintomas de "badsmellite"</h3>
+                    <ul>
+                        <li class="fragment fade-in">Código duplicado</li>
+                        <li class="fragment fade-in">Métodos longos</li>
+                        <li class="fragment fade-in">Classes grandes</li>
+                        <li class="fragment fade-in">"ifs" complexos</li>
+                    </ul>
+                </section>
+
+                <section>
+                        <h3>Exemplo de "badsmellite"</h3>
+                        <pre>
+                            <code data-trim data-noescape>
+                                print('Operações aritiméticas de números inteiros de 0 à 50')
+                                num1 = int(input('Escolha o primeiro número: '))
+                                sign = input('Qual a operação? +, -, /, or *: ')
+                                num2 = int(input('Escolha o segundo número: '))
+
+                                if num1 == 0 and sign == '+' and num2 == 0:
+                                    print("0+0 = 0")
+                                if num1 == 0 and sign == '+' and num2 == 1:
+                                    print("0+1 = 1")
+                                if num1 == 0 and sign == '+' and num2 == 2:
+                                    print("0+2 = 2")
+
+                                ...
+
+                                # Simplesmente faz um IF e ELSE com todas possibilidades
+                            </code>
+                        </pre>
+                        <p><small>Adaptado de <a href="https://github.com/sobolevn/python-code-disasters/blob/master/python/my_first_calculator.py">python-code-disasters</a></small></p>
+                    </section>
+
+                <section>
+                    <h2>Prático</h2>
+                </section>
+
+                <section>
+                    <h3>Aplicando técnicas de refatoração</h3>
+                </section>
+
+                <section>
+                    <h3>Extração de Métodos</h3>
+                    <ol>
+                        <li class="fragment fade-down">Crie um novo método.</li>
+                        <li class="fragment fade-down">Copie o código a ser extraído e cole no novo método. Teste</li>
+                        <li class="fragment fade-down">Procure por variáveis locais no código extraído. Elas precisam ser declaradas ou serem passadas como argumento. Adivinha??</li>
+                        <li class="fragment fade-down">Troque o código extraído pela invocação do novo método. Teste de novo</li>
+                    </ol>
+                </section>
+                <section>
+                    <h3>Extração de Campos <strike>e Classes</strike></h3>
+                    <ol>
+                        <li class="fragment fade-right">Crie uma nova classe</li>
+                        <li class="fragment fade-right">Adicione o atributo que deve ser movido</li>
+                        <li class="fragment fade-right">Determine como esse atributo deverá ser acessado da fonte (classe antiga)</li>
+                        <li class="fragment fade-right">Altere toda a referencia do campo para a referencia da nova classe</li>
+                        <li class="fragment fade-right">Teste</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h3>Renomeação de Métodos</h3>
+                    <ol>
+                        <li class="fragment fade-up">Declare um novo método com o nome desejado</li>
+                        <li class="fragment fade-up">Copie o corpo do antigo método para o novo</li>
+                        <li class="fragment fade-up">Altere o corpo do antigo método para ele invocar o novo método. Teste!</li>
+                        <li class="fragment fade-up">Procure todas as refencias do antigo método e altere para invocar o novo. Teste, a cada referênca alterada!</li>
+                        <li class="fragment fade-up">Remova o método antigo. Caso ele faça parte de alguma API, apenas o marque como depreciado. Teste</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h3>Decomposição Condicional</h3>
+                    <ol>
+                        <li class="fragment fade-left">Extraia a condição no método próprio dela</li>
+                        <li class="fragment fade-left">Substitua a condição pela invocação do método. Teste!!</li>
+                        <li class="fragment fade-left">Extraia o "então" para o seu própio método</li>
+                        <li class="fragment fade-left">Substitua o então pela invocação do método. Teste!!</li>
+                        <li class="fragment fade-left">Repetir os 2 ultimos passos para o "senão". Teste!!</li>
+                    </ol>
+                </section>
+
+                <section>
+                    <h3>Conclusões</h3>
+                    <ul>
+                        <li class="fragment fade-down">Os testes automatizados nos apoiaram durante a refatoração</li>
+                        <li class="fragment fade-right">As refatorações garantem que eu consiga um código mais testável e organizado</li>
+                        <li class="fragment fade-up">Testes e código bem refatorado ajudam as pessoas a entenderem melhor que está sendo codificado</li>
+                        <li class="fragment fade-left">Dão mais confiança em alterar o código</li>
+                    </ul>
+                </section>
+                <section>
+                        <h3>Referências/Recomendações</h3>
+                        <ul>
+                            <li><a href="https://www.amazon.com/Refactoring-Ruby-Addison-Wesley-Professional/dp/0321984137" target="_blank">Refactoring, Ruby Edition</a></li>
+                            <li><a href="https://www.amazon.com.br/TDD-Desenvolvimento-Guiado-por-Testes/dp/857780724X" target="_blank">TDD - Desenvolvimento Guiado por Testes</a></li>
+                            <li><a href="https://technologyconversations.com/2013/12/20/test-driven-development-tdd-example-walkthrough/" target="_blank">TDD: Example Walkthrough</a></li>
+                            <li><a href="https://pt.wikipedia.org/wiki/Teste_de_software" target="_bank">Teste de Software</a></li>
+                        </ul>
+                    </section>
+                <section>
+                    <h2>Venha ser um Softplayer</h2>
+                    <img src="img/logo_softplan.png" alt="venha ser um softplayer" style="background-color: white;">
+                    <a href="https://www.softplan.com.br/carreira" target="_blank">https://www.softplan.com.br/carreira</a>
+                </section>
+                <section>
+                    <h2>Perguntas?</h2>
+                    <p><i class="fa fa-at"></i> <a href="http://elyssonmr.com" target="_blank">elyssonmr.com</a></p>
+                    <p><i class="fa fa-envelope"></i> <a href="#" target="_blank">elyssonmr at gmail dot com</a></p>
+                    <p><i class="fa fa-twitter-square"></i> <a href="https://twitter.com/elyssonmr" target="_blank">@elyssonmr</a></p>
+                    <p><i class="fa fa-linkedin-square"></i> <a href="https://br.linkedin.com/in/elyssonmr" target="_blank">Élysson Mendes Rezende</a></p>
+                    <p><i class="fa fa-github-square"></i> <a href="https://github.com/elyssonmr" target="_blank">elyssonmr</a></p>
+                </section>
+                <section>
+                    <h2>Muito Obrigado!!</h2>
+                </section>
+            </div>
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.js"></script>
+
+        <script>
+            // More info about config & dependencies:
+            // - https://github.com/hakimel/reveal.js#configuration
+            // - https://github.com/hakimel/reveal.js#dependencies
+            Reveal.initialize({
+                controls: true,
+                progress: true,
+                history: true,
+                center: true,
+                slideNumber: true,
+                transition: 'concave', // none/fade/slide/convex/concave/zoom
+                dependencies: [
+                    { src: 'plugin/markdown/marked.js' },
+                    { src: 'plugin/markdown/markdown.js' },
+                    { src: 'plugin/notes/notes.js', async: true },
+                    { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+                ]
+            });
+        </script>
+    </body>
+</html>
